@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.main.book">
+
+    <insert id="create" parameterType="com.example.main.domain.BookVO">
+        INSERT INTO book
+        VALUES (
+        null,
+        #{title},
+        #{author},
+        #{publisher},
+        #{date},
+        #{cost}
+        )
+    </insert>
+
+    <select id="read" parameterType="int" resultType="com.example.main.domain.BookVO">
+        SELECT *
+        FROM book
+        WHERE id = #{id}
+    </select>
+
+    <select id="totalCount" resultType="long">
+        SELECT count(*)
+        FROM book
+    </select>
+
+    <select id="list" parameterType="boolean" resultType="com.example.main.domain.BookVO">
+        SELECT *
+        FROM book
+        <choose>
+            <when test="asc">
+                ORDER BY title ASC
+            </when>
+            <otherwise>
+                ORDER BY title DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <update id="update" parameterType="com.example.main.domain.BookVO">
+        UPDATE book
+        SET
+        title = #{title},
+        author = #{author},
+        publisher = #{publisher},
+        date = #{date},
+        cost = #{cost}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE
+        FROM book
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

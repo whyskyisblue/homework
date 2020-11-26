@@ -1,0 +1,81 @@
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+.wrap{
+    padding: 40px;
+}
+.layout{
+    width: 100%;
+    height: 100%;
+    background: #eee;
+    text-align: center;
+}
+.container{
+    margin: 0 auto;
+    width: 500px;
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #e8e8e8;
+}
+.table-form{
+    margin: 20px 80px;
+    table-layout: fixed;
+}
+.table-form th{
+    width: 200px;
+    text-align: left;
+}
+.table-form td{
+    text-align: left;
+}
+.btn-primary,
+.btn-default,
+.btn-danger{
+    box-sizing: border-box;
+    display: inline-block;
+    text-align: center;
+    width: 140px;
+    padding: 10px 20px;
+    background: #4a86e8;
+    text-decoration: none;
+    border: none;
+    color: #fff;
+}
+.btn-default{
+    background: #b5b5b5;
+}
+.btn-danger{
+    background: #ff0000;
+}
+.btn-small{
+    width: 80px;
+    padding: 5px 10px;
+}
+.btn-xs{
+    width: auto;
+    padding: 4px 6px;
+    font-size: 14px;
+}
+.required{
+    color: red;
+}
+.table{
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    border-top: 1px solid #cacaca;
+    border-bottom: 1px solid #cacaca;
+}
+.table th{
+    border-bottom: 1px solid #cacaca;
+}
+.table th,
+.table td{
+    text-align: left;
+    padding: 4px 6px;
+}
+.top-logout{
+	text-align: right;
+}
