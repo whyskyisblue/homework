@@ -40,8 +40,8 @@
         <tr>
             <th>発売日</th>
             <td>
-                <fmt:formatDate value="${bookVO.date}" type="date" pattern="yyyy/MM/dd" var="date" />
-                <input type="text" name="date" value="${date}" placeholder="yyyy/mm/dd" />
+                <fmt:formatDate value="${bookVO.date}" type="date" pattern="yyyy/M/d" var="date" />
+                <input type="text" name="date" value="${date}" placeholder="yyyy/m/d" />
             </td>
         </tr>
         <tr>
@@ -84,8 +84,8 @@ function validateForm() {
         return false;
     }
 
-    if (date && !date.match(/^\d{4}\/\d{2}\/\d{2}$/)) {
-        alert("yyyy/mm/ddに合わせてお願いいたします。");
+    if (date && (!date.match(/^\d{4}\/\d{1,2}\/\d{1,2}$/) || isNaN(Date.parse(date)))) {
+        alert("yyyy/m/dに合わせてお願いいたします。");
         return false;
     }
 

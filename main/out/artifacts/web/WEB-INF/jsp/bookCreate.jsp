@@ -25,7 +25,7 @@
         <tr>
             <th>発売日</th>
             <td>
-                <input type="text" name="date" value="${bookVO.date}" placeholder="yyyy/mm/dd" />
+                <input type="text" name="date" value="${bookVO.date}" placeholder="yyyy/m/d" />
             </td>
         </tr>
         <tr>
@@ -68,8 +68,8 @@ function validateForm() {
         return false;
     }
 
-    if (date && !date.match(/^\d{4}\/\d{2}\/\d{2}$/)) {
-        alert("yyyy/mm/ddに合わせてお願いいたします。");
+    if (date && (!date.match(/^\d{4}\/\d{1,2}\/\d{1,2}$/) || isNaN(Date.parse(date)))) {
+        alert("yyyy/m/dに合わせてお願いいたします。");
         return false;
     }
 

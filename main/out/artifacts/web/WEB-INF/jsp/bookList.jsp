@@ -23,10 +23,10 @@
                 <th>
                     <c:choose>
                         <c:when test="${asc}">
-                            <a href="/bookList?asc=false">タイトル▲</a>
+                            <a href="/bookList?page=${page}&asc=false">タイトル▲</a>
                         </c:when>
                         <c:otherwise>
-                            <a href="/bookList?asc=true">タイトル▼</a>
+                            <a href="/bookList?page=${page}&asc=true">タイトル▼</a>
                         </c:otherwise>
                     </c:choose>
                 </th>
@@ -54,7 +54,7 @@
                             <td>${bookVO.publisher}</td>
                             <td><fmt:formatDate value="${bookVO.date}" type="date" pattern="yyyy年 M月 d日" /></td>
                             <td style="text-align: right;"><fmt:formatNumber value="${bookVO.cost}" pattern="#,###" />円</td>
-                            <td><a href="/bookDelete?id=${bookVO.id}" class="btn-danger btn-small" onclick="return confirm('削除しますか?');">削除</a></td>
+                            <td><a href="/bookDelete?id=${bookVO.id}&page=${page}&asc=${asc}" class="btn-danger btn-small" onclick="return confirm('削除しますか?');">削除</a></td>
                         </tr>
                     </c:forEach>
                 </c:otherwise>

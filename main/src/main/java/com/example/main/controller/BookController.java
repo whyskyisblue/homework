@@ -37,8 +37,8 @@ public class BookController {
 
         model.addAttribute("loginId", loginId);
 
-        int dataPerPage = 10; // 한 페이지에 보여질 데이터 수
-        int pageBlockCount = 10; // 페이지 구간 페이지 수
+        int dataPerPage = 3; // 한 페이지에 보여질 데이터 수
+        int pageBlockCount = 3; // 페이지 구간 페이지 수
         long totalCount = bookService.totalCount(); // 전체 데이터 수
         int efPage; // 0 >, totalPage <=
         int totalPage; // 전체 페이지 수
@@ -211,6 +211,8 @@ public class BookController {
     @RequestMapping(value = "bookDelete", method = RequestMethod.GET)
     public String bookDelete(
             @RequestParam("id") int bookId,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "asc", required = false) Boolean asc,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -220,7 +222,7 @@ public class BookController {
 
         bookService.delete(bookId);
 
-        return "redirect:/";
+        return "redirect:/bookList?page=" + (page == null ? "" : page) + "&asc=" + (asc == null ? "" : asc);
     }
 
 }
