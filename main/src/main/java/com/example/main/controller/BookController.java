@@ -113,21 +113,29 @@ public class BookController {
 
     //bookForm
     @RequestMapping(value = "bookCreate", method = RequestMethod.GET)
-    public String bookCreate(Model model) {
+    public String bookCreate(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "asc", required = false) Boolean asc,
+            Model model
+    ) {
         String loginId = userService.loginId();
 
         if (loginId == null)
             return "redirect:/login";
 
         model.addAttribute("action", "create");
-        model.addAttribute("actionUrl", "/bookCreate");
+        model.addAttribute("actionUrl", "/bookCreate?page=" + page + "&asc=" + asc);
 
         return "bookForm";
     }
 
     //bookCreateComplete
     @RequestMapping(value = "bookCreate", method = RequestMethod.POST)
-    public String bookCreateProcess(@ModelAttribute BookVO bookVO) {
+    public String bookCreateProcess(
+            @ModelAttribute BookVO bookVO,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "asc", required = false) Boolean asc
+    ) {
         String loginId = userService.loginId();
 
         if (loginId == null)
@@ -139,17 +147,23 @@ public class BookController {
             throw new RuntimeException(errorMsg);
         }
 
-        return "redirect:/bookCreateComplete";
+        return "redirect:/bookCreateComplete?page=" + page + "&asc=" + asc;
     }
 
     //bookFormComplete
     @RequestMapping(value = "bookCreateComplete", method = RequestMethod.GET)
-    public String bookCreateComplete(Model model) {
+    public String bookCreateComplete(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "asc", required = false) Boolean asc,
+            Model model
+    ) {
         String loginId = userService.loginId();
 
         if (loginId == null)
             return "redirect:/login";
 
+        model.addAttribute("page", page);
+        model.addAttribute("asc", asc);
         model.addAttribute("action", "create");
 
         return "bookFormComplete";
@@ -159,6 +173,8 @@ public class BookController {
     @RequestMapping(value = "bookUpdate", method = RequestMethod.GET)
     public String bookUpdate(
             @RequestParam("id") int bookId,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "asc", required = false) Boolean asc,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -172,7 +188,7 @@ public class BookController {
             throw new RuntimeException("存在していない本です");
 
         model.addAttribute("action", "update");
-        model.addAttribute("actionUrl", "/bookUpdate?id=" + bookId);
+        model.addAttribute("actionUrl", "/bookUpdate?id=" + bookId + "&page=" + page + "&asc=" + asc);
         model.addAttribute("bookVO", bookVO);
 
         return "bookForm";
@@ -180,7 +196,11 @@ public class BookController {
 
     //bookUpdate
     @RequestMapping(value = "bookUpdate", method = RequestMethod.POST)
-    public String bookUpdateProcess(@ModelAttribute BookVO bookVO) {
+    public String bookUpdateProcess(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "asc", required = false) Boolean asc,
+            @ModelAttribute BookVO bookVO
+    ) {
         String loginId = userService.loginId();
 
         if (loginId == null)
@@ -192,16 +212,22 @@ public class BookController {
             throw new RuntimeException(errorMsg);
         }
 
-        return "redirect:/bookUpdateComplete";
+        return "redirect:/bookUpdateComplete?page=" + page + "&asc=" + asc;
     }
 
     @RequestMapping(value = "bookUpdateComplete", method = RequestMethod.GET)
-    public String bookUpdateComplete(Model model) {
+    public String bookUpdateComplete(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "asc", required = false) Boolean asc,
+            Model model
+    ) {
         String loginId = userService.loginId();
 
         if (loginId == null)
             return "redirect:/login";
 
+        model.addAttribute("page", page);
+        model.addAttribute("asc", asc);
         model.addAttribute("action", "update");
 
         return "bookFormComplete";

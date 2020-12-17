@@ -49,12 +49,12 @@
                 <c:otherwise>
                     <c:forEach var="bookVO" items="${bookVOList}">
                         <tr>
-                            <td><a href="/bookUpdate?id=${bookVO.id}">${bookVO.title.length() > 10 ? bookVO.title.substring(0, 10).concat('...') : bookVO.title}</a></td>
+                            <td><a href="/bookUpdate?id=${bookVO.id}&page=${page}&asc=${asc}">${bookVO.title.length() > 10 ? bookVO.title.substring(0, 10).concat('...') : bookVO.title}</a></td>
                             <td>${bookVO.author}</td>
                             <td>${bookVO.publisher}</td>
                             <td><fmt:formatDate value="${bookVO.date}" type="date" pattern="yyyy年 M月 d日" /></td>
                             <td style="text-align: right;"><fmt:formatNumber value="${bookVO.cost}" pattern="#,###" />円</td>
-                            <td><a href="/bookDelete?id=${bookVO.id}&page=${page}&asc=${asc}" class="btn-danger btn-small" onclick="return confirm('削除しますか?');">削除</a></td>
+                            <td style="width: 80px;"><a href="/bookDelete?id=${bookVO.id}&page=${page}&asc=${asc}" class="btn-danger btn-small" onclick="return confirm('削除しますか?');">削除</a></td>
                         </tr>
                     </c:forEach>
                 </c:otherwise>
@@ -82,7 +82,7 @@
         </c:if>
     </div>
     <div style="margin: 12px auto; text-align: right;">
-        <a href="/bookCreate" class="btn-primary">登録</a>
+        <a href="/bookCreate?page=${page}&asc=${asc}" class="btn-primary">登録</a>
     </div>
 </div>
 </body>

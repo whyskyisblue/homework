@@ -21,7 +21,7 @@ html, body {
 }
 .table-form{
     margin: 20px 80px;
-    table-layout: fixed;
+    table-layout: auto;
 }
 .table-form th{
     width: 200px;

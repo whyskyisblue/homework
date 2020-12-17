@@ -84,7 +84,7 @@ function validateForm() {
         return false;
     }
 
-    if (date && (!date.match(/^\d{4}\/\d{1,2}\/\d{1,2}$/) || isNaN(Date.parse(date)))) {
+    if (date && !isValidDate(date)) {
         alert("yyyy/m/dに合わせてお願いいたします。");
         return false;
     }

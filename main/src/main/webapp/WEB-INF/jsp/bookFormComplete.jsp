@@ -12,5 +12,5 @@
 </c:choose>
 <br>
 <br>
-<a href="/" class="btn-default">確認</a>
+<a href="/bookList?page=${page}&amp;asc=${asc}" class="btn-default">確認</a>
 <%@ include file="part/footer.jsp" %>

@@ -4,7 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <title>site</title>
-<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="/style.css" />
+<script src="/script.js"></script>
 </head>
 <body>
 <table class="layout">
