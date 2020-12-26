@@ -21,14 +21,20 @@
         WHERE id = #{id}
     </select>
 
-    <select id="totalCount" resultType="long">
+    <select id="totalCount" parameterType="Map" resultType="long">
         SELECT count(*)
         FROM book
+        <if test="keyword != null and !keyword.equals('')">
+            WHERE title like concat('%', #{keyword}, '%')
+        </if>
     </select>
 
-    <select id="list" parameterType="boolean" resultType="com.example.main.domain.BookVO">
+    <select id="list" parameterType="Map" resultType="com.example.main.domain.BookVO">
         SELECT *
         FROM book
+        <if test="keyword != null and !keyword.equals('')">
+            WHERE title like concat('%', #{keyword}, '%')
+        </if>
         <choose>
             <when test="asc">
                 ORDER BY title ASC

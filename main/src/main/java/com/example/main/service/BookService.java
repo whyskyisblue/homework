@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface BookService {
 
-    long totalCount();
+    long totalCount(String keyword);
 
-    List<BookVO> list(int dataPerPage, int page, boolean asc);
+    List<BookVO> list(int dataPerPage, int page, boolean asc, String keyword);
 
     String create(BookVO bookVO);
 

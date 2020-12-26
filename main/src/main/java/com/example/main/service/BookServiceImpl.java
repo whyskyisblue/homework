@@ -44,20 +44,20 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public long totalCount() {
-        return bookDao.totalCount();
+    public long totalCount(String keyword) {
+        return bookDao.totalCount(keyword);
     }
 
     //ListRead
     @Override
-    public List<BookVO> list(int dataPerPage, int page, boolean asc) {
+    public List<BookVO> list(int dataPerPage, int page, boolean asc, String keyword) {
         // 1페이지에서 10개 가져옴
         // page = 1, offset = 0, count = 10
         // page = 2, offset = 10, count = 10
         // page = 3, offset = 20, count = 10
         int offset = (page - 1) * dataPerPage;
 
-        return bookDao.list(offset, dataPerPage, asc);
+        return bookDao.list(offset, dataPerPage, asc, keyword);
     }
 
     //create

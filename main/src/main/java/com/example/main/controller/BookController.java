@@ -28,6 +28,7 @@ public class BookController {
     public String bookList(
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Boolean asc,
+            @RequestParam(required = false) String keyword,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -39,7 +40,7 @@ public class BookController {
 
         int dataPerPage = 3; // 한 페이지에 보여질 데이터 수
         int pageBlockCount = 3; // 페이지 구간 페이지 수
-        long totalCount = bookService.totalCount(); // 전체 데이터 수
+        long totalCount = bookService.totalCount(keyword); // 전체 데이터 수
         int efPage; // 0 >, totalPage <=
         int totalPage; // 전체 페이지 수
         int pageBlockStart; // 페이지 구간 시작 번호
@@ -82,7 +83,7 @@ public class BookController {
             pageBlockNext = pageBlockEnd >= totalPage ? null : pageBlockEnd + 1;
             pageStart = 1; // TODO
             pageEnd = 1; // TODO
-            bookVOList = bookService.list(dataPerPage, efPage, efAsc);
+            bookVOList = bookService.list(dataPerPage, efPage, efAsc, keyword);
         } else {
             efPage = 1;
             totalPage = 0;
@@ -95,9 +96,10 @@ public class BookController {
             bookVOList = new ArrayList<>();
         }
 
-        model.addAttribute("asc", efAsc);
-        model.addAttribute("totalCount", totalCount);
         model.addAttribute("page", efPage);
+        model.addAttribute("asc", efAsc);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("totalCount", totalCount);
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("pageBlockStart", pageBlockStart);
         model.addAttribute("pageBlockEnd", pageBlockEnd);
@@ -116,6 +118,7 @@ public class BookController {
     public String bookCreate(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "asc", required = false) Boolean asc,
+            @RequestParam(required = false) String keyword,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -123,8 +126,11 @@ public class BookController {
         if (loginId == null)
             return "redirect:/login";
 
+        model.addAttribute("page", page);
+        model.addAttribute("asc", asc);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("action", "create");
-        model.addAttribute("actionUrl", "/bookCreate?page=" + page + "&asc=" + asc);
+        model.addAttribute("actionUrl", "/bookCreate?page=" + page + "&asc=" + asc + "&keyword=" + keyword);
 
         return "bookForm";
     }
@@ -134,7 +140,8 @@ public class BookController {
     public String bookCreateProcess(
             @ModelAttribute BookVO bookVO,
             @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "asc", required = false) Boolean asc
+            @RequestParam(value = "asc", required = false) Boolean asc,
+            @RequestParam(required = false) String keyword
     ) {
         String loginId = userService.loginId();
 
@@ -147,7 +154,7 @@ public class BookController {
             throw new RuntimeException(errorMsg);
         }
 
-        return "redirect:/bookCreateComplete?page=" + page + "&asc=" + asc;
+        return "redirect:/bookCreateComplete?page=" + page + "&asc=" + asc + "&keyword=" + keyword;
     }
 
     //bookFormComplete
@@ -155,6 +162,7 @@ public class BookController {
     public String bookCreateComplete(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "asc", required = false) Boolean asc,
+            @RequestParam(required = false) String keyword,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -164,6 +172,7 @@ public class BookController {
 
         model.addAttribute("page", page);
         model.addAttribute("asc", asc);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("action", "create");
 
         return "bookFormComplete";
@@ -175,6 +184,7 @@ public class BookController {
             @RequestParam("id") int bookId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "asc", required = false) Boolean asc,
+            @RequestParam(required = false) String keyword,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -187,8 +197,11 @@ public class BookController {
         if (bookVO == null)
             throw new RuntimeException("存在していない本です");
 
+        model.addAttribute("page", page);
+        model.addAttribute("asc", asc);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("action", "update");
-        model.addAttribute("actionUrl", "/bookUpdate?id=" + bookId + "&page=" + page + "&asc=" + asc);
+        model.addAttribute("actionUrl", "/bookUpdate?id=" + bookId + "&page=" + page + "&asc=" + asc + "&keyword=" + keyword);
         model.addAttribute("bookVO", bookVO);
 
         return "bookForm";
@@ -199,6 +212,7 @@ public class BookController {
     public String bookUpdateProcess(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "asc", required = false) Boolean asc,
+            @RequestParam(required = false) String keyword,
             @ModelAttribute BookVO bookVO
     ) {
         String loginId = userService.loginId();
@@ -212,13 +226,14 @@ public class BookController {
             throw new RuntimeException(errorMsg);
         }
 
-        return "redirect:/bookUpdateComplete?page=" + page + "&asc=" + asc;
+        return "redirect:/bookUpdateComplete?page=" + page + "&asc=" + asc + "&keyword=" + keyword;
     }
 
     @RequestMapping(value = "bookUpdateComplete", method = RequestMethod.GET)
     public String bookUpdateComplete(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "asc", required = false) Boolean asc,
+            @RequestParam(required = false) String keyword,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -228,6 +243,7 @@ public class BookController {
 
         model.addAttribute("page", page);
         model.addAttribute("asc", asc);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("action", "update");
 
         return "bookFormComplete";
@@ -239,6 +255,7 @@ public class BookController {
             @RequestParam("id") int bookId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "asc", required = false) Boolean asc,
+            @RequestParam(required = false) String keyword,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -248,7 +265,7 @@ public class BookController {
 
         bookService.delete(bookId);
 
-        return "redirect:/bookList?page=" + (page == null ? "" : page) + "&asc=" + (asc == null ? "" : asc);
+        return "redirect:/bookList?page=" + (page == null ? "" : page) + "&asc=" + (asc == null ? "" : asc) + "&keyword=" + keyword;
     }
 
 }

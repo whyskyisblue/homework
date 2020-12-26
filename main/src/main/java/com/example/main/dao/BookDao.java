@@ -6,7 +6,9 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class BookDao {
@@ -24,12 +26,19 @@ public class BookDao {
         return sqlSession.selectOne(NAMESPACE + "read", id);
     }
 
-    public long totalCount() {
-        return sqlSession.selectOne(NAMESPACE + "totalCount");
+    public long totalCount(String keyword) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("keyword", keyword);
+
+        return sqlSession.selectOne(NAMESPACE + "totalCount", paramMap);
     }
 
-    public List<BookVO> list(int offset, int limit, boolean asc) {
-        return sqlSession.selectList(NAMESPACE + "list", asc, new RowBounds(offset, limit));
+    public List<BookVO> list(int offset, int limit, boolean asc, String keyword) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("asc", asc);
+        paramMap.put("keyword", keyword);
+
+        return sqlSession.selectList(NAMESPACE + "list", paramMap, new RowBounds(offset, limit));
     }
 
     public boolean update(BookVO bookVO) {
