@@ -1,5 +1,6 @@
 package com.example.main.controller;
 
+import com.example.main.domain.BookSearchVO;
 import com.example.main.domain.BookVO;
 import com.example.main.service.BookService;
 import com.example.main.service.UserService;
@@ -26,9 +27,7 @@ public class BookController {
     //booklist
     @RequestMapping(value = "bookList", method = RequestMethod.GET)
     public String bookList(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Boolean asc,
-            @RequestParam(required = false) String keyword,
+            @ModelAttribute("search") BookSearchVO search,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -38,9 +37,13 @@ public class BookController {
 
         model.addAttribute("loginId", loginId);
 
+        if (search.getField() == null || !search.getField().equals("date") && !search.getField().equals("cost"))
+            search.setField("title");
+
         int dataPerPage = 3; // 한 페이지에 보여질 데이터 수
         int pageBlockCount = 3; // 페이지 구간 페이지 수
-        long totalCount = bookService.totalCount(keyword); // 전체 데이터 수
+        long totalCount = bookService.totalCount(search.getKeyword()); // 전체 데이터 수
+        Integer page = search.getPage();
         int efPage; // 0 >, totalPage <=
         int totalPage; // 전체 페이지 수
         int pageBlockStart; // 페이지 구간 시작 번호
@@ -49,7 +52,10 @@ public class BookController {
         Integer pageBlockNext; // 페이지 다음 구간 번호
         Integer pageStart; // 페이지 처음 번호 1 or null
         Integer pageEnd; // 페이지 끝 번호 totalPage or null
-        boolean efAsc = asc == null || asc; // 오름차순 여부
+
+        boolean efAsc = search.getAsc() == null || search.getAsc(); // 오름차순 여부
+        search.setAsc(efAsc);
+
         List<BookVO> bookVOList; // 현재 페이지 데이터 목록
 
         if (totalCount > 0) {
@@ -83,7 +89,10 @@ public class BookController {
             pageBlockNext = pageBlockEnd >= totalPage ? null : pageBlockEnd + 1;
             pageStart = 1; // TODO
             pageEnd = 1; // TODO
-            bookVOList = bookService.list(dataPerPage, efPage, efAsc, keyword);
+
+            search.setPage(efPage);
+
+            bookVOList = bookService.list(dataPerPage, search);
         } else {
             efPage = 1;
             totalPage = 0;
@@ -93,12 +102,16 @@ public class BookController {
             pageBlockNext = null;
             pageStart = 1; // TODO
             pageEnd = 1; // TODO
+
+            search.setPage(efPage);
+
             bookVOList = new ArrayList<>();
         }
 
-        model.addAttribute("page", efPage);
-        model.addAttribute("asc", efAsc);
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", search.getPage());
+        model.addAttribute("field", search.getField());
+        model.addAttribute("asc", search.getAsc());
+        model.addAttribute("keyword", search.getKeyword());
         model.addAttribute("totalCount", totalCount);
         model.addAttribute("totalPage", totalPage);
         model.addAttribute("pageBlockStart", pageBlockStart);
@@ -116,9 +129,7 @@ public class BookController {
     //bookForm
     @RequestMapping(value = "bookCreate", method = RequestMethod.GET)
     public String bookCreate(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "asc", required = false) Boolean asc,
-            @RequestParam(required = false) String keyword,
+            @ModelAttribute("search") BookSearchVO search,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -126,11 +137,12 @@ public class BookController {
         if (loginId == null)
             return "redirect:/login";
 
-        model.addAttribute("page", page);
-        model.addAttribute("asc", asc);
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", search.getPage());
+        model.addAttribute("field", search.getField());
+        model.addAttribute("asc", search.getAsc());
+        model.addAttribute("keyword", search.getKeyword());
         model.addAttribute("action", "create");
-        model.addAttribute("actionUrl", "/bookCreate?page=" + page + "&asc=" + asc + "&keyword=" + keyword);
+        model.addAttribute("actionUrl", search.concatQs("/bookCreate"));
 
         return "bookForm";
     }
@@ -138,10 +150,8 @@ public class BookController {
     //bookCreateComplete
     @RequestMapping(value = "bookCreate", method = RequestMethod.POST)
     public String bookCreateProcess(
-            @ModelAttribute BookVO bookVO,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "asc", required = false) Boolean asc,
-            @RequestParam(required = false) String keyword
+            @ModelAttribute("search") BookSearchVO search,
+            @ModelAttribute BookVO bookVO
     ) {
         String loginId = userService.loginId();
 
@@ -154,15 +164,13 @@ public class BookController {
             throw new RuntimeException(errorMsg);
         }
 
-        return "redirect:/bookCreateComplete?page=" + page + "&asc=" + asc + "&keyword=" + keyword;
+        return "redirect:" + search.concatQs("/bookCreateComplete");
     }
 
     //bookFormComplete
     @RequestMapping(value = "bookCreateComplete", method = RequestMethod.GET)
     public String bookCreateComplete(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "asc", required = false) Boolean asc,
-            @RequestParam(required = false) String keyword,
+            @ModelAttribute("search") BookSearchVO search,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -170,9 +178,10 @@ public class BookController {
         if (loginId == null)
             return "redirect:/login";
 
-        model.addAttribute("page", page);
-        model.addAttribute("asc", asc);
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", search.getPage());
+        model.addAttribute("field", search.getField());
+        model.addAttribute("asc", search.getAsc());
+        model.addAttribute("keyword", search.getKeyword());
         model.addAttribute("action", "create");
 
         return "bookFormComplete";
@@ -182,9 +191,7 @@ public class BookController {
     @RequestMapping(value = "bookUpdate", method = RequestMethod.GET)
     public String bookUpdate(
             @RequestParam("id") int bookId,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "asc", required = false) Boolean asc,
-            @RequestParam(required = false) String keyword,
+            @ModelAttribute("search") BookSearchVO search,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -197,11 +204,12 @@ public class BookController {
         if (bookVO == null)
             throw new RuntimeException("存在していない本です");
 
-        model.addAttribute("page", page);
-        model.addAttribute("asc", asc);
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", search.getPage());
+        model.addAttribute("field", search.getField());
+        model.addAttribute("asc", search.getAsc());
+        model.addAttribute("keyword", search.getKeyword());
         model.addAttribute("action", "update");
-        model.addAttribute("actionUrl", "/bookUpdate?id=" + bookId + "&page=" + page + "&asc=" + asc + "&keyword=" + keyword);
+        model.addAttribute("actionUrl", search.concatQs("/bookUpdate?id=" + bookId));
         model.addAttribute("bookVO", bookVO);
 
         return "bookForm";
@@ -210,9 +218,7 @@ public class BookController {
     //bookUpdate
     @RequestMapping(value = "bookUpdate", method = RequestMethod.POST)
     public String bookUpdateProcess(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "asc", required = false) Boolean asc,
-            @RequestParam(required = false) String keyword,
+            @ModelAttribute("search") BookSearchVO search,
             @ModelAttribute BookVO bookVO
     ) {
         String loginId = userService.loginId();
@@ -226,14 +232,12 @@ public class BookController {
             throw new RuntimeException(errorMsg);
         }
 
-        return "redirect:/bookUpdateComplete?page=" + page + "&asc=" + asc + "&keyword=" + keyword;
+        return "redirect:" + search.concatQs("/bookUpdateComplete");
     }
 
     @RequestMapping(value = "bookUpdateComplete", method = RequestMethod.GET)
     public String bookUpdateComplete(
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "asc", required = false) Boolean asc,
-            @RequestParam(required = false) String keyword,
+            @ModelAttribute("search") BookSearchVO search,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -241,9 +245,10 @@ public class BookController {
         if (loginId == null)
             return "redirect:/login";
 
-        model.addAttribute("page", page);
-        model.addAttribute("asc", asc);
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("page", search.getPage());
+        model.addAttribute("field", search.getField());
+        model.addAttribute("asc", search.getAsc());
+        model.addAttribute("keyword", search.getKeyword());
         model.addAttribute("action", "update");
 
         return "bookFormComplete";
@@ -253,9 +258,7 @@ public class BookController {
     @RequestMapping(value = "bookDelete", method = RequestMethod.GET)
     public String bookDelete(
             @RequestParam("id") int bookId,
-            @RequestParam(value = "page", required = false) Integer page,
-            @RequestParam(value = "asc", required = false) Boolean asc,
-            @RequestParam(required = false) String keyword,
+            @ModelAttribute("search") BookSearchVO search,
             Model model
     ) {
         String loginId = userService.loginId();
@@ -265,7 +268,7 @@ public class BookController {
 
         bookService.delete(bookId);
 
-        return "redirect:/bookList?page=" + (page == null ? "" : page) + "&asc=" + (asc == null ? "" : asc) + "&keyword=" + keyword;
+        return "redirect:" + search.concatQs("/bookList");
     }
 
 }

@@ -29,7 +29,7 @@
         </if>
     </select>
 
-    <select id="list" parameterType="Map" resultType="com.example.main.domain.BookVO">
+    <select id="list" parameterType="com.example.main.domain.BookSearchVO" resultType="com.example.main.domain.BookVO">
         SELECT *
         FROM book
         <if test="keyword != null and !keyword.equals('')">
@@ -37,10 +37,10 @@
         </if>
         <choose>
             <when test="asc">
-                ORDER BY title ASC
+                ORDER BY ${field} ASC
             </when>
             <otherwise>
-                ORDER BY title DESC
+                ORDER BY ${field} DESC
             </otherwise>
         </choose>
     </select>

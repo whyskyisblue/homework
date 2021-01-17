@@ -1,5 +1,6 @@
 package com.example.main.dao;
 
+import com.example.main.domain.BookSearchVO;
 import com.example.main.domain.BookVO;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
@@ -33,12 +34,8 @@ public class BookDao {
         return sqlSession.selectOne(NAMESPACE + "totalCount", paramMap);
     }
 
-    public List<BookVO> list(int offset, int limit, boolean asc, String keyword) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("asc", asc);
-        paramMap.put("keyword", keyword);
-
-        return sqlSession.selectList(NAMESPACE + "list", paramMap, new RowBounds(offset, limit));
+    public List<BookVO> list(int offset, int limit, BookSearchVO search) {
+        return sqlSession.selectList(NAMESPACE + "list", search, new RowBounds(offset, limit));
     }
 
     public boolean update(BookVO bookVO) {

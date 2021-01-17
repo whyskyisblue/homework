@@ -52,7 +52,7 @@
         </tr>
     </table>
     <button type"submit" class="btn-primary">登録</button>
-    <a href="/bookList?page=${page}&asc=${asc}&amp;keyword=${keyword}" class="btn-default">戻る</a>
+    <a href="/bookList?page=${page}&field=${field}&asc=${asc}&amp;keyword=${keyword}" class="btn-default">戻る</a>
 </form>
 <script>
 function validateForm() {

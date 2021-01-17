@@ -3,5 +3,5 @@
 <strong>登録完了</strong>
 <br>
 <br>
-<a href="/bookList?page=${page}&amp;asc=${asc}&amp;keyword=${keyword}" class="btn-default">一覧へ</a>
+<a href="/bookList?page=${page}&amp;field=${field}&amp;asc=${asc}&amp;keyword=${keyword}" class="btn-default">一覧へ</a>
 <%@ include file="part/footer.jsp" %>

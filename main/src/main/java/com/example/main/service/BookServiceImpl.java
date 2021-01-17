@@ -1,6 +1,7 @@
 package com.example.main.service;
 
 import com.example.main.dao.BookDao;
+import com.example.main.domain.BookSearchVO;
 import com.example.main.domain.BookVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,14 +51,15 @@ public class BookServiceImpl implements BookService {
 
     //ListRead
     @Override
-    public List<BookVO> list(int dataPerPage, int page, boolean asc, String keyword) {
+    public List<BookVO> list(int dataPerPage, BookSearchVO search) {
         // 1페이지에서 10개 가져옴
         // page = 1, offset = 0, count = 10
         // page = 2, offset = 10, count = 10
         // page = 3, offset = 20, count = 10
+        int page = search.getPage() == null ? 1 : search.getPage();
         int offset = (page - 1) * dataPerPage;
 
-        return bookDao.list(offset, dataPerPage, asc, keyword);
+        return bookDao.list(offset, dataPerPage, search);
     }
 
     //create
